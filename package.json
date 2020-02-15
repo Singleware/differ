@@ -1,0 +1,44 @@
+{
+  "author": {
+    "name": "Silas B. Domingos",
+    "email": "hello@balmante.eti.br",
+    "url": "https://balmante.eti.br"
+  },
+  "name": "@singleware/differ",
+  "description": "Singleware differ package.",
+  "license": "MIT",
+  "version": "1.0.2",
+  "main": "release/source/index.js",
+  "types": "release/types/index.d.ts",
+  "keywords": [
+    "diff",
+    "differ"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/singleware/differ"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "dependencies": {
+    "@singleware/class": "^1.1.19"
+  },
+  "devDependencies": {
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.5"
+  },
+  "prettier": {
+    "printWidth": 125,
+    "tabWidth": 2,
+    "singleQuote": true,
+    "semi": true
+  },
+  "scripts": {
+    "build": "npm run clean && npm run make-source && npm run make-examples",
+    "clean": "rm -rf ./release",
+    "make-source": "npx tsc -p ./source && npm run update-source",
+    "make-examples": "npx tsc -p ./examples",
+    "update-source": "cp -Rf ./source/types/*.d.ts ./release/types/types"
+  }
+}

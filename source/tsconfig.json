@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "commonjs",
+    "strict": true,
+    "sourceMap": true,
+    "incremental": true,
+    "declaration": true,
+    "experimentalDecorators": true,
+    "suppressExcessPropertyErrors": true,
+    "outDir": "../release/source",
+    "declarationDir": "../release/types"
+  },
+  "include": [
+    "./**/*"
+  ]
+}
