@@ -35,7 +35,7 @@ let Base = class Base extends Class.Null {
                     rows[rhsIndex] = diagonal + 1;
                 }
                 else {
-                    const previous = (_a = rows[rhsIndex - 1], (_a !== null && _a !== void 0 ? _a : 0));
+                    const previous = (_a = rows[rhsIndex - 1]) !== null && _a !== void 0 ? _a : 0;
                     if (previous > rows[rhsIndex]) {
                         rows[rhsIndex] = previous;
                     }
@@ -46,85 +46,52 @@ let Base = class Base extends Class.Null {
         return table;
     }
     /**
-     * Build all patch entries based on the specified comparison table, LHS and RHS items.
+     * Get all the different patch entries based on the specified LHS and RHS items.
      * @param lhsItems Left-hand-side items.
      * @param rhsItems Right-hand-side items.
-     * @param table Comparison table.
-     * @param group Determines whether or not the similar results should be grouped.
-     * @returns Returns the patch entries.
+     * @returns Returns all patch entries.
      */
-    buildPatches(lhsItems, rhsItems, table, group) {
+    difference(lhsItems, rhsItems) {
         const list = [];
-        let currentPatch;
-        let currentAction;
-        let currentValue;
+        const table = this.buildTable(lhsItems, rhsItems);
+        let patch;
+        let action;
+        let value;
         for (let lhsIndex = lhsItems.length - 1, rhsIndex = rhsItems.length - 1; lhsIndex > -1 || rhsIndex > -1;) {
             if (lhsIndex < 0) {
-                currentAction = 1 /* Insert */;
-                currentValue = rhsItems[rhsIndex--];
+                action = 1 /* Insert */;
+                value = rhsItems[rhsIndex--];
             }
             else if (rhsIndex < 0) {
-                currentAction = 2 /* Remove */;
-                currentValue = lhsItems[lhsIndex--];
+                action = 2 /* Remove */;
+                value = lhsItems[lhsIndex--];
             }
             else if (lhsItems[lhsIndex] === rhsItems[rhsIndex]) {
-                currentAction = 0 /* None */;
-                currentValue = lhsItems[lhsIndex--];
+                action = 0 /* None */;
+                value = lhsItems[lhsIndex--];
                 rhsIndex--;
             }
             else {
                 const lhsResult = lhsIndex > 0 ? table[lhsIndex - 1][rhsIndex] : -1;
                 const rhsResult = rhsIndex > 0 ? table[lhsIndex][rhsIndex - 1] : -1;
                 if (lhsResult < rhsResult) {
-                    currentAction = 1 /* Insert */;
-                    currentValue = rhsItems[rhsIndex--];
+                    action = 1 /* Insert */;
+                    value = rhsItems[rhsIndex--];
                 }
                 else {
-                    currentAction = 2 /* Remove */;
-                    currentValue = lhsItems[lhsIndex--];
+                    action = 2 /* Remove */;
+                    value = lhsItems[lhsIndex--];
                 }
             }
-            if (!group || currentPatch === void 0 || currentPatch.action !== currentAction) {
-                currentPatch = { values: [currentValue], action: currentAction };
-                list.push(currentPatch);
+            if (patch === void 0 || patch.action !== action) {
+                patch = { values: [value], action: action };
+                list.push(patch);
             }
             else {
-                currentPatch.values.unshift(currentValue);
+                patch.values.unshift(value);
             }
         }
         return list.reverse();
-    }
-    /**
-     * Build the first patch entry based on the specified LHS and RHS items.
-     * @param lhsItems Left-hand-side items.
-     * @param rhsItems Right-hand-side items.
-     * @returns Returns the first patch entry or undefined.
-     */
-    buildFirstPatch(lhsItems, rhsItems) {
-        let offset = 0;
-        while (offset < lhsItems.length && offset < rhsItems.length && lhsItems[offset] === rhsItems[offset]) {
-            offset++;
-        }
-        if (offset > 0) {
-            return { values: lhsItems.slice(0, offset), action: 0 /* None */ };
-        }
-        return void 0;
-    }
-    /**
-     * Build the diff based on the specified LHS and RHS items.
-     * @param lhsItems Left-hand-side items.
-     * @param rhsItems Right-hand-side items.
-     * @param group Determines whether or not the results should be grouped.
-     * @returns Returns all patch entries.
-     */
-    buildDiff(lhsItems, rhsItems, group) {
-        const first = this.buildFirstPatch(lhsItems, rhsItems);
-        if (first !== void 0) {
-            const lhsPart = lhsItems.slice(first.values.length);
-            const rhsPart = rhsItems.slice(first.values.length);
-            return [first, ...this.buildPatches(lhsPart, rhsPart, this.buildTable(lhsPart, rhsPart), group)];
-        }
-        return this.buildPatches(lhsItems, rhsItems, this.buildTable(lhsItems, rhsItems), group);
     }
     /**
      * Optimize the specified patch entries into a fragment list.
@@ -138,48 +105,52 @@ let Base = class Base extends Class.Null {
         for (const patch of patches) {
             switch (patch.action) {
                 case 0 /* None */:
-                    list.push((previous = { index: index, selection: patch.values.slice(), action: patch.action }));
-                    break;
-                case 1 /* Insert */:
-                    if (previous === void 0 || previous.action !== 3 /* Change */) {
-                        list.push((previous = { index: index, selection: patch.values.slice(), action: patch.action }));
+                    if (previous === void 0 || previous.action !== 0 /* None */) {
+                        list.push((previous = { index: index++, selection: [...patch.values], action: patch.action }));
                     }
                     else {
+                        previous.selection.push(...patch.values);
+                    }
+                    break;
+                case 1 /* Insert */:
+                    if (previous === void 0 || previous.action === 0 /* None */) {
+                        list.push((previous = { index: index++, selection: [...patch.values], action: patch.action }));
+                    }
+                    else if (previous.action === 2 /* Remove */) {
+                        previous.replacement = patch.values;
+                        previous.action = 3 /* Change */;
+                    }
+                    else if (previous.action === 3 /* Change */) {
                         previous.replacement.push(...patch.values);
+                    }
+                    else {
+                        previous.selection.push(...patch.values);
                     }
                     break;
                 case 2 /* Remove */:
                     if (previous === void 0 || previous.action === 0 /* None */) {
-                        list.push((previous = { index: index, selection: patch.values.slice(), action: patch.action }));
-                    }
-                    else if (previous.action === 3 /* Change */) {
-                        previous.selection.push(...patch.values);
+                        list.push((previous = { index: index++, selection: [...patch.values], action: patch.action }));
                     }
                     else if (previous.action === 1 /* Insert */) {
                         previous.replacement = previous.selection;
                         previous.selection = patch.values;
                         previous.action = 3 /* Change */;
                     }
-                    index--;
+                    else {
+                        previous.selection.push(...patch.values);
+                    }
                     break;
             }
-            index++;
         }
         return list;
     }
 };
 __decorate([
-    Class.Protected()
+    Class.Private()
 ], Base.prototype, "buildTable", null);
 __decorate([
     Class.Protected()
-], Base.prototype, "buildPatches", null);
-__decorate([
-    Class.Private()
-], Base.prototype, "buildFirstPatch", null);
-__decorate([
-    Class.Protected()
-], Base.prototype, "buildDiff", null);
+], Base.prototype, "difference", null);
 __decorate([
     Class.Public()
 ], Base.prototype, "optimize", null);

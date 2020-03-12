@@ -20,11 +20,10 @@ let Array = class Array extends base_1.Base {
      * Compute all patch entries based on the specified LHS and RHS arrays.
      * @param lhsArray Left-hand-side array.
      * @param rhsArray Right-hand-side array.
-     * @param group Determines whether or not similar results should be grouped.
      * @returns Returns all patch entries.
      */
-    fromItems(lhsArray, rhsArray, group) {
-        return this.buildDiff(lhsArray, rhsArray, (group !== null && group !== void 0 ? group : true));
+    fromItems(lhsArray, rhsArray) {
+        return this.difference(lhsArray, rhsArray);
     }
 };
 __decorate([

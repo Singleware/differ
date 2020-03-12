@@ -7,7 +7,7 @@ import { Action } from './action';
 /**
  * Fragment type.
  */
-export type Fragment<T> = {
+export interface Fragment<T> {
   /**
    * Fragment action.
    */
@@ -24,8 +24,4 @@ export type Fragment<T> = {
    * Fragment replacement.
    */
   replacement?: T[];
-  /**
-   * Fragment children.
-   */
-  children?: Fragment<T>[];
-};
+}

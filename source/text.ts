@@ -19,7 +19,7 @@ export class Text extends Base<string> {
    * @returns Returns an array containing all tokens.
    */
   @Class.Private()
-  private getCharTokens(text: string): string[] {
+  private static getCharTokens(text: string): string[] {
     return text.split('');
   }
 
@@ -29,8 +29,8 @@ export class Text extends Base<string> {
    * @returns Returns an array containing all tokens.
    */
   @Class.Private()
-  private getWordTokens(text: string): string[] {
-    return text.split(/(\b|\s+)/);
+  private static getWordTokens(text: string): string[] {
+    return text.split(/([\b\s]+)/);
   }
 
   /**
@@ -39,7 +39,7 @@ export class Text extends Base<string> {
    * @returns Returns an array containing all tokens.
    */
   @Class.Private()
-  private getLineTokens(text: string): string[] {
+  private static getLineTokens(text: string): string[] {
     return text.split(/^/m);
   }
 
@@ -47,35 +47,32 @@ export class Text extends Base<string> {
    * Compute all patch entries based on the text characters from the specified LHS and RHS text.
    * @param lhsText Left-hand-side text.
    * @param rhsText Right-hand-side text.
-   * @param group Determines whether or not similar results should be grouped.
    * @returns Returns all patch entries.
    */
   @Class.Public()
-  public fromChars(lhsText: string, rhsText: string, group?: boolean): Types.Patch<string>[] {
-    return this.buildDiff(this.getCharTokens(lhsText), this.getCharTokens(rhsText), group ?? true);
+  public fromChars(lhsText: string, rhsText: string): Types.Patch<string>[] {
+    return this.difference(Text.getCharTokens(lhsText), Text.getCharTokens(rhsText));
   }
 
   /**
    * Compute all patch entries based on the text words from the specified LHS and RHS text.
    * @param lhsText Left-hand-side text.
    * @param rhsText Right-hand-side text.
-   * @param group Determines whether or not similar results should be grouped.
    * @returns Returns all patch entries.
    */
   @Class.Public()
-  public fromWords(lhsText: string, rhsText: string, group?: boolean): Types.Patch<string>[] {
-    return this.buildDiff(this.getWordTokens(lhsText), this.getWordTokens(rhsText), group ?? true);
+  public fromWords(lhsText: string, rhsText: string): Types.Patch<string>[] {
+    return this.difference(Text.getWordTokens(lhsText), Text.getWordTokens(rhsText));
   }
 
   /**
    * Compute all patch entries based on the text lines from the specified LHS and RHS text.
    * @param lhsText Left-hand-side text.
    * @param rhsText Right-hand-side text.
-   * @param group Determines whether or not similar results should be grouped.
    * @returns Returns all patch entries.
    */
   @Class.Public()
-  public fromLines(lhsText: string, rhsText: string, group?: boolean): Types.Patch<string>[] {
-    return this.buildDiff(this.getLineTokens(lhsText), this.getLineTokens(rhsText), group ?? true);
+  public fromLines(lhsText: string, rhsText: string): Types.Patch<string>[] {
+    return this.difference(Text.getLineTokens(lhsText), Text.getLineTokens(rhsText));
   }
 }

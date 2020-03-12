@@ -5,6 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var Text_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 /*!
  * Copyright (C) 2020 Silas B. Domingos
@@ -15,13 +16,13 @@ const base_1 = require("./base");
 /**
  * Diff text class.
  */
-let Text = class Text extends base_1.Base {
+let Text = Text_1 = class Text extends base_1.Base {
     /**
      * Get all character tokens based on the specified text.
      * @param text Text input.
      * @returns Returns an array containing all tokens.
      */
-    getCharTokens(text) {
+    static getCharTokens(text) {
         return text.split('');
     }
     /**
@@ -29,57 +30,45 @@ let Text = class Text extends base_1.Base {
      * @param text Text input.
      * @returns Returns an array containing all tokens.
      */
-    getWordTokens(text) {
-        return text.split(/(\b|\s+)/);
+    static getWordTokens(text) {
+        return text.split(/([\b\s]+)/);
     }
     /**
      * Get all line tokens based on the specified text.
      * @param text Text input.
      * @returns Returns an array containing all tokens.
      */
-    getLineTokens(text) {
+    static getLineTokens(text) {
         return text.split(/^/m);
     }
     /**
      * Compute all patch entries based on the text characters from the specified LHS and RHS text.
      * @param lhsText Left-hand-side text.
      * @param rhsText Right-hand-side text.
-     * @param group Determines whether or not similar results should be grouped.
      * @returns Returns all patch entries.
      */
-    fromChars(lhsText, rhsText, group) {
-        return this.buildDiff(this.getCharTokens(lhsText), this.getCharTokens(rhsText), (group !== null && group !== void 0 ? group : true));
+    fromChars(lhsText, rhsText) {
+        return this.difference(Text_1.getCharTokens(lhsText), Text_1.getCharTokens(rhsText));
     }
     /**
      * Compute all patch entries based on the text words from the specified LHS and RHS text.
      * @param lhsText Left-hand-side text.
      * @param rhsText Right-hand-side text.
-     * @param group Determines whether or not similar results should be grouped.
      * @returns Returns all patch entries.
      */
-    fromWords(lhsText, rhsText, group) {
-        return this.buildDiff(this.getWordTokens(lhsText), this.getWordTokens(rhsText), (group !== null && group !== void 0 ? group : true));
+    fromWords(lhsText, rhsText) {
+        return this.difference(Text_1.getWordTokens(lhsText), Text_1.getWordTokens(rhsText));
     }
     /**
      * Compute all patch entries based on the text lines from the specified LHS and RHS text.
      * @param lhsText Left-hand-side text.
      * @param rhsText Right-hand-side text.
-     * @param group Determines whether or not similar results should be grouped.
      * @returns Returns all patch entries.
      */
-    fromLines(lhsText, rhsText, group) {
-        return this.buildDiff(this.getLineTokens(lhsText), this.getLineTokens(rhsText), (group !== null && group !== void 0 ? group : true));
+    fromLines(lhsText, rhsText) {
+        return this.difference(Text_1.getLineTokens(lhsText), Text_1.getLineTokens(rhsText));
     }
 };
-__decorate([
-    Class.Private()
-], Text.prototype, "getCharTokens", null);
-__decorate([
-    Class.Private()
-], Text.prototype, "getWordTokens", null);
-__decorate([
-    Class.Private()
-], Text.prototype, "getLineTokens", null);
 __decorate([
     Class.Public()
 ], Text.prototype, "fromChars", null);
@@ -89,7 +78,16 @@ __decorate([
 __decorate([
     Class.Public()
 ], Text.prototype, "fromLines", null);
-Text = __decorate([
+__decorate([
+    Class.Private()
+], Text, "getCharTokens", null);
+__decorate([
+    Class.Private()
+], Text, "getWordTokens", null);
+__decorate([
+    Class.Private()
+], Text, "getLineTokens", null);
+Text = Text_1 = __decorate([
     Class.Describe()
 ], Text);
 exports.Text = Text;

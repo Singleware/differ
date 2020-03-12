@@ -7,7 +7,7 @@ import { Action } from './action';
 /**
  * Patch type.
  */
-export type Patch<T> = {
+export interface Patch<T> {
   /**
    * Patch action.
    */
@@ -16,4 +16,4 @@ export type Patch<T> = {
    * Patch values.
    */
   values: T[];
-};
+}

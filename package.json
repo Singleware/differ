@@ -7,7 +7,7 @@
   "name": "@singleware/differ",
   "description": "Singleware differ package.",
   "license": "MIT",
-  "version": "1.0.2",
+  "version": "1.0.8",
   "main": "release/source/index.js",
   "types": "release/types/index.d.ts",
   "keywords": [
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "prettier": "^1.19.1",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.3"
   },
   "prettier": {
     "printWidth": 125,
@@ -39,6 +39,8 @@
     "clean": "rm -rf ./release",
     "make-source": "npx tsc -p ./source && npm run update-source",
     "make-examples": "npx tsc -p ./examples",
-    "update-source": "cp -Rf ./source/types/*.d.ts ./release/types/types"
+    "update-source": "npm run update-types && npm run update-html",
+    "update-types": "cp -Rf ./source/types/*.d.ts ./release/types/types",
+    "update-html": "cp -Rf ./source/types/html/*.d.ts ./release/types/types/html"
   }
 }

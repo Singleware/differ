@@ -17,11 +17,10 @@ export class Array<T> extends Base<T> {
    * Compute all patch entries based on the specified LHS and RHS arrays.
    * @param lhsArray Left-hand-side array.
    * @param rhsArray Right-hand-side array.
-   * @param group Determines whether or not similar results should be grouped.
    * @returns Returns all patch entries.
    */
   @Class.Public()
-  public fromItems(lhsArray: T[], rhsArray: T[], group?: boolean): Types.Patch<T>[] {
-    return this.buildDiff(lhsArray, rhsArray, group ?? true);
+  public fromItems(lhsArray: T[], rhsArray: T[]): Types.Patch<T>[] {
+    return this.difference(lhsArray, rhsArray);
   }
 }

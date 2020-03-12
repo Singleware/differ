@@ -5,3 +5,11 @@
 export { Patch } from './patch';
 export { Fragment } from './fragment';
 export { Action } from './action';
+
+// Imported aliases.
+import * as Html from './html';
+
+/**
+ * Html namespace.
+ */
+export import Html = Html;
